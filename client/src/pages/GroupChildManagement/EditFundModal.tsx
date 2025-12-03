@@ -19,7 +19,6 @@ const EditFundModal = ({ visible, onClose, fund }: Props) => {
   const { openSnackbar } = useSnackbar();
   const { mutate: updateFund, isPending } = useUpdateFundMutation();
 
-  // Load dữ liệu cũ
   useEffect(() => {
     if (fund && visible) {
       setForm({

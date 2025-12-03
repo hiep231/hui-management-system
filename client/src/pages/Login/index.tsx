@@ -46,7 +46,6 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center px-6 py-12 lg:px-8">
-      {/* Header: Logo & Title */}
       <div className="sm:mx-auto sm:w-full sm:max-w-sm text-center mb-10">
         <div className="mx-auto h-16 w-16 bg-gradient-to-br from-primary to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg shadow-primary/30 mb-4">
           <Wallet className="h-8 w-8 text-white" />
@@ -61,7 +60,6 @@ export default function Login() {
 
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <form className="space-y-6" onSubmit={handleLogin}>
-          {/* Phone Input */}
           <div>
             <label
               htmlFor="phone"
@@ -87,7 +85,6 @@ export default function Login() {
             </div>
           </div>
 
-          {/* Password Input */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
               <label
@@ -126,7 +123,6 @@ export default function Login() {
             </div>
           </div>
 
-          {/* Login Button */}
           <div>
             <button
               type="submit"

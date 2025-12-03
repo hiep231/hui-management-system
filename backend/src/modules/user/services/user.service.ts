@@ -15,7 +15,6 @@ import { ModelType } from '@typegoose/typegoose/lib/types'
 
 interface IUserService {
   register(dto: UserDTO): Promise<UserModel>
-  // logout(conditions: FilterQuery<UserModel>): Promise<boolean>;
   login(dto: LoginUserDTO, isHashPassword: boolean): Promise<LoginUserResponseDTO>
 
   findByField(conditions: FilterQuery<UserModel>): Promise<UserModel>
@@ -31,7 +30,6 @@ export class UserService extends BaseService<UserModel> implements IUserService 
     private readonly authService: AuthService
   ) {
     super(userModel)
-    // this.init()
   }
 
   async register(dto: UserDTO): Promise<UserModel> {
@@ -46,13 +44,11 @@ export class UserService extends BaseService<UserModel> implements IUserService 
       throw new Error('Email already exists')
     }
 
-    // create token
     const auth = await this.authService.createToken({
       phone: dto.phone,
       email: dto.email
     })
 
-    // hash password
     dto.password = await bcrypt.hash(dto.password, 10)
 
     dto['createdBy'] = dto?.phone || dto?.email || null
@@ -71,10 +67,9 @@ export class UserService extends BaseService<UserModel> implements IUserService 
 
     const exists: UserModel = await this._model.findOne({ phone: dto.phone })
     if (!exists || exists.phone !== dto.phone) {
-      throw new Error('Invalid token') // Lỗi này nên là 'Invalid credentials' hoặc 'User not found'
+      throw new Error('Invalid token')
     }
 
-    // hash & check password
     let checkPassword = dto.password == exists.password
     if (isHashPassword) {
       checkPassword = bcrypt.compareSync(dto.password, exists.password)
@@ -85,18 +80,14 @@ export class UserService extends BaseService<UserModel> implements IUserService 
 
     const auth = await this.authService.createToken({ phone: dto.phone, email: exists.email })
 
-    // update info - ***ĐÃ THAY ĐỔI: KHÔNG LƯU TOKEN VÀO DB***
-    const updated: UserModel = await this.updateOne(
-      { _id: new ObjectId(exists._id) },
-      { recentAt: new Date() } // Chỉ cập nhật 'recentAt'
-    )
+    const updated: UserModel = await this.updateOne({ _id: new ObjectId(exists._id) }, { recentAt: new Date() })
 
     if (auth) {
       return {
         phone: dto.phone,
-        accessToken: auth.accessToken, // Service vẫn trả token để Controller set cookie
+        accessToken: auth.accessToken,
         expire: auth.expire,
-        accountInfo: updated || exists // Trả về thông tin user
+        accountInfo: updated || exists
       }
     }
 
@@ -130,10 +121,8 @@ export class UserService extends BaseService<UserModel> implements IUserService 
       return
     }
 
-    // create token
     const auth = await this.authService.createToken({ phone: dto.phone, email: dto.email })
 
-    // hash password
     dto.password = await bcrypt.hash(dto.password, 10)
 
     const payloadModel = { ...dto, token: auth.accessToken, recentAt: new Date() }

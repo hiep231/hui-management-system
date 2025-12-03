@@ -44,15 +44,11 @@ export class AuthService implements IAuthService {
 
   async validateToken(token: string): Promise<any> {
     try {
-      // 1. Xác thực token
-      // (Hàm này sẽ tự động dùng secret key đã cấu hình trong AuthModule)
       const payload = await this.jwtService.verifyAsync(token)
 
-      // 2. Trả về payload nếu thành công
       return payload
     } catch (error) {
-      // 3. Ném lỗi nếu token không hợp lệ (hết hạn, sai chữ ký, v.v.)
-      this.loggerService.error('AuthService', this.validateToken.name, error) // Giả sử bạn có loggerService
+      this.loggerService.error('AuthService', this.validateToken.name, error)
       throw new UnauthorizedException('Invalid or expired token')
     }
   }

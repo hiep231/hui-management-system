@@ -29,8 +29,6 @@ export class UpdateCycleDTO {
   @IsString()
   payoutDate?: string
 
-  // (Trường tienHot đã bị loại bỏ)
-
   @ApiProperty({ example: true, required: false })
   @IsOptional()
   closed?: boolean
@@ -52,12 +50,12 @@ export class ClaimCycleDTO {
   @IsNotEmpty()
   cycleId: string
 
-  @ApiProperty({ example: 1 }) // Hốt 1 chân
+  @ApiProperty({ example: 1 })
   @IsNumber()
   @Min(1)
   legsClaimed: number
 
-  @ApiProperty({ example: 100000 }) // B: Tiền bỏ ra (tiền lãi)
+  @ApiProperty({ example: 100000 })
   @IsNumber()
   @Min(0)
   paidAmount: number

@@ -34,7 +34,6 @@ const ActiveCycleCard = ({
   const currentBid = hasWinner ? claimers[0].paidAmount || 0 : 0;
   const baseAmount = group.amount;
 
-  // --- LOGIC TÍNH TOÁN CỐT LÕI ---
   const paymentList = useMemo(() => {
     const allCycles = group.cycles || [];
     const pastCycles = allCycles.filter(
@@ -46,7 +45,6 @@ const ActiveCycleCard = ({
         const memberId = getSafeId(member.player);
         const totalLegs = member.initialLegs;
 
-        // Đếm số chân ĐÃ HỐT ở các kỳ TRƯỚC
         let deadLegsCount = 0;
         pastCycles.forEach((c: any) => {
           const winners = c.claimers || [];
@@ -57,7 +55,6 @@ const ActiveCycleCard = ({
           });
         });
 
-        // Đếm số chân ĐANG HỐT ở kỳ NÀY
         let winningLegsNow = 0;
         claimers.forEach((w: any) => {
           if (getSafeId(w.player) === memberId) {
@@ -65,13 +62,11 @@ const ActiveCycleCard = ({
           }
         });
 
-        // Số chân SỐNG còn lại
         const aliveLegsCount = Math.max(
           0,
           totalLegs - deadLegsCount - winningLegsNow
         );
 
-        // TÍNH TIỀN
         const deadAmount = deadLegsCount * baseAmount;
         const aliveAmount = aliveLegsCount * (baseAmount - currentBid);
         const totalAmountDue = deadAmount + aliveAmount;
@@ -115,7 +110,6 @@ const ActiveCycleCard = ({
   return (
     <div className="mb-6 relative z-10 animate-in fade-in zoom-in-95 duration-300">
       <div className="bg-white rounded-2xl shadow-lg border-2 border-blue-500 overflow-hidden">
-        {/* --- 1. KHU VỰC NGƯỜI HỐT (WINNER) --- */}
         <div className="border-b border-gray-100 bg-blue-50/30">
           {!hasWinner ? (
             <div className="p-4 text-center">
@@ -138,7 +132,6 @@ const ActiveCycleCard = ({
             </div>
           ) : (
             <div className="p-0">
-              {/* HEADER DANH SÁCH NGƯỜI HỐT - ĐÃ THÊM NÚT ADD */}
               <div className="px-4 py-2 bg-orange-100 text-orange-800 text-xs font-bold uppercase tracking-wider flex justify-between items-center">
                 <div className="flex items-center gap-2">
                   <span>🏆 Người hốt ({claimers.length})</span>
@@ -198,7 +191,6 @@ const ActiveCycleCard = ({
           )}
         </div>
 
-        {/* --- 2. TIẾN ĐỘ --- */}
         <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
           <div className="flex justify-between items-end mb-2">
             <div>
@@ -226,7 +218,6 @@ const ActiveCycleCard = ({
           </div>
         </div>
 
-        {/* --- 3. DANH SÁCH ĐÓNG TIỀN --- */}
         <div className="max-h-[450px] overflow-y-auto bg-white">
           {paymentList.map((item) => (
             <div

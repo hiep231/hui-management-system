@@ -16,17 +16,14 @@ import { ChevronDown, ChevronRight, Lock, CheckCircle2 } from "lucide-react";
 const VerticalCycleList = ({ group }: { group: TModelChildGroup }) => {
   const cycles = group.cycles || [];
   const members = group.members || [];
-  // Sắp xếp kỳ: 1 -> 12
   const sortedCycles = [...cycles].sort(
     (a, b) => a.cycleNumber - b.cycleNumber
   );
 
-  // Tìm kỳ hiện tại (kỳ đầu tiên chưa đóng)
   const activeCycleIndex = sortedCycles.findIndex((c) => !c.closed);
   const activeCycleNumber =
     activeCycleIndex !== -1 ? sortedCycles[activeCycleIndex].cycleNumber : -1;
 
-  // State: Kỳ nào đang được mở rộng để xem chi tiết? (Mặc định là kỳ hiện tại)
   const [expandedCycleNum, setExpandedCycleNum] =
     useState<number>(activeCycleNumber);
 
@@ -34,7 +31,6 @@ const VerticalCycleList = ({ group }: { group: TModelChildGroup }) => {
   const { mutate: updatePayment } = useUpdatePaymentStatusMutation();
   const { mutate: unclaimCycle } = useUnclaimCycleMutation();
 
-  // Modal states
   const [confirmPayment, setConfirmPayment] = useState<any>(null);
   const [confirmUnclaim, setConfirmUnclaim] = useState<any>(null);
 
@@ -51,18 +47,12 @@ const VerticalCycleList = ({ group }: { group: TModelChildGroup }) => {
       "open-popup",
       <SelectWinnerModal
         members={members}
-        // --- CẬP NHẬT 2 DÒNG NÀY ---
-        cycles={cycles} // Truyền toàn bộ lịch sử
-        targetCycleNumber={cycle.cycleNumber} // Truyền kỳ đang chọn (ví dụ: 2)
-        // ---------------------------
-
+        cycles={cycles}
+        targetCycleNumber={cycle.cycleNumber}
         currentCycleClaimers={currentClaimers}
         onSelect={(selectedMember) => {
           const player = selectedMember.player as unknown as TModelPlayer;
 
-          // Logic tính maxLegsCanClaim cũng cần chính xác tuyệt đối như trong Modal
-          // (Dùng lại logic realLiveLegs từ selectedMember đã được tính trong Modal trả ra)
-          // Lưu ý: selectedMember ở đây là object từ mảng sortedMembers trong Modal, nên nó ĐÃ CÓ realLiveLegs rồi
           const legsRemaining = (selectedMember as any).realLiveLegs;
 
           const fakeParentGroup: TModelParentGroups = {
@@ -167,7 +157,6 @@ const VerticalCycleList = ({ group }: { group: TModelChildGroup }) => {
           cycle.cycleNumber > activeCycleNumber && activeCycleNumber !== -1;
         const isPast = cycle.cycleNumber < activeCycleNumber;
 
-        // Render Card Header (Trạng thái thu gọn)
         const CollapsedCard = (
           <div
             onClick={() =>
@@ -217,10 +206,8 @@ const VerticalCycleList = ({ group }: { group: TModelChildGroup }) => {
 
         return (
           <div key={cycle.cycleNumber}>
-            {/* Nếu đang mở -> Hiện Full Card, ngược lại hiện Card thu gọn */}
             {isExpanded ? (
               <div className="relative">
-                {/* Nút thu gọn */}
                 <div
                   onClick={() => setExpandedCycleNum(-1)}
                   className="flex items-center gap-2 mb-2 px-2 cursor-pointer text-gray-500 hover:text-primary"
@@ -252,7 +239,6 @@ const VerticalCycleList = ({ group }: { group: TModelChildGroup }) => {
         );
       })}
 
-      {/* Modals */}
       <Modal
         visible={!!confirmPayment}
         title="Xác nhận thu tiền"

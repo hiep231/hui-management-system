@@ -24,7 +24,6 @@ const ListUser = () => {
 
   return (
     <div>
-      {/* Search Bar */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-500 mb-4 sticky top-[calc(var(--zaui-safe-area-inset-top)+60px+7px)] z-10">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -38,7 +37,6 @@ const ListUser = () => {
         </div>
       </div>
 
-      {/* List */}
       <div className="pb-20">
         {isLoading ? (
           <div className="space-y-3">

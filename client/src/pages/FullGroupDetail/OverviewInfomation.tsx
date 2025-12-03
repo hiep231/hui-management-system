@@ -15,7 +15,6 @@ const OverviewInfomation = () => {
 
   return (
     <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-      {/* Dòng 1: Số tiền (Quan trọng nhất) */}
       <div className="flex justify-between items-end mb-4 border-b border-gray-100 pb-3">
         <div>
           <p className="text-xs text-gray-400 font-medium uppercase mb-1">
@@ -35,7 +34,6 @@ const OverviewInfomation = () => {
         </div>
       </div>
 
-      {/* Dòng 2: Các thông số phụ (Grid) */}
       <div className="grid grid-cols-3 gap-2 text-center">
         <div className="bg-gray-50 rounded-lg p-2">
           <p className="text-xs text-gray-500 mb-1 flex justify-center items-center gap-1">

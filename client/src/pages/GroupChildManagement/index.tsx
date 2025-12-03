@@ -52,7 +52,6 @@ const GroupChildManagement = () => {
       </Header>
 
       <PageContainer className="flex-1 pb-24 pt-4">
-        {/* Summary Card */}
         <div className="bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl p-5 text-white shadow-lg mb-6 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full blur-2xl -mr-6 -mt-6"></div>
 

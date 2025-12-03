@@ -135,7 +135,6 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Drag handle */}
             <motion.div
               className="flex items-center justify-center py-3"
               onPointerDown={(e) => dragControls.start(e)}

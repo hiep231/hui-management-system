@@ -53,7 +53,6 @@ const Step3Participants = ({ participants, setParticipants }: Props) => {
 
   return (
     <div className="animate-in fade-in slide-in-from-right-4 duration-300 pb-40">
-      {/* UI: Sticky Search Header */}
       <div className="sticky top-16 z-30 bg-gray-50 pb-2 pt-1">
         <div className="bg-white p-3 rounded-xl shadow-sm border border-gray-200 flex items-center gap-2">
           <Search className="text-gray-400 w-5 h-5" />
@@ -92,7 +91,6 @@ const Step3Participants = ({ participants, setParticipants }: Props) => {
                     : "bg-white border-gray-200 shadow-sm"
                 )}
               >
-                {/* Player Info */}
                 <div
                   className="flex-1 min-w-0 pr-4 cursor-pointer"
                   onClick={() => !isSelected && handleUpdateLegs(player, 1)}
@@ -114,7 +112,6 @@ const Step3Participants = ({ participants, setParticipants }: Props) => {
                   </div>
                 </div>
 
-                {/* Controls */}
                 <div className="flex items-center gap-1">
                   {isSelected ? (
                     <div className="flex items-center bg-white rounded-xl border border-blue-100 shadow-sm p-1">
@@ -156,7 +153,6 @@ const Step3Participants = ({ participants, setParticipants }: Props) => {
         )}
       </div>
 
-      {/* UI: Floating Status Bar (Better UX) */}
       <div
         className={cn(
           "fixed bottom-[88px] left-4 right-4 z-40 p-4 rounded-2xl shadow-xl border flex justify-between items-center backdrop-blur-md transition-colors duration-300",

@@ -123,22 +123,19 @@ export class BaseService<T> implements IBaseService<T> {
   ): Promise<ISearchResponse<T[]> | any> {
     const startTime = Date.now()
     try {
-      // Search
       if (search) {
         conditions = { ...conditions, $text: { $search: `"${search}"` } }
       }
-      // Find
       let queryPromisePipeline = this._model.find(conditions)
       populates.forEach((populate) => {
         const populateArray: string[] = populate.split('.')
         if (populateArray.length == 1) {
           queryPromisePipeline.populate({ path: populateArray[0] })
         } else {
-          // max 2 populate
           queryPromisePipeline.populate({ path: populateArray[0], populate: { path: populateArray[1] } })
         }
       })
-      // Paging
+
       if (page && pageSize >= 0) {
         queryPromisePipeline = queryPromisePipeline.skip(pageSize * page)
       }
@@ -146,15 +143,15 @@ export class BaseService<T> implements IBaseService<T> {
         queryPromisePipeline = queryPromisePipeline.limit(pageSize)
       }
       const totalRecords = await this._model.estimatedDocumentCount(conditions)
-      // Sort
+
       if (sort) {
         queryPromisePipeline = queryPromisePipeline.sort(sort)
       }
-      // Select
+
       if (select) {
         queryPromisePipeline.select(select)
       }
-      // QueryDB
+
       const results: Array<any> = await queryPromisePipeline.lean()
       return {
         response: results,
@@ -189,17 +186,10 @@ export class BaseService<T> implements IBaseService<T> {
     }
   }
 
-  /**
-   * @param data Data model
-   * @returns Document saved
-   */
   async save(data: Partial<T>, index: boolean = true): Promise<T | any> {
     try {
       const _id = new mongoose.Types.ObjectId()
       const result = await new this._model({ ...data, _id }).save()
-      // if (index && result != null) {
-      // 	this._esInstance.index(result.toObject());
-      // }
 
       return result
     } catch (error) {
@@ -219,10 +209,6 @@ export class BaseService<T> implements IBaseService<T> {
 
       const results = await this._model.insertMany(datas)
 
-      // if (index && results != null && results.length > 0) {
-      // 	this._esInstance.indexMany(results);
-      // }
-
       return results
     } catch (error) {
       throw new Error(error)
@@ -236,10 +222,6 @@ export class BaseService<T> implements IBaseService<T> {
   async saveById(_id: mongoose.Types.ObjectId, data: Partial<T>, index: boolean = true): Promise<T | any> {
     try {
       const result = await new this._model({ ...data, _id }).save()
-      // if (index && result != null) {
-      // 	this._esInstance.index(result.toObject());
-      // }
-
       return result
     } catch (error) {
       throw new Error(error)
@@ -261,10 +243,6 @@ export class BaseService<T> implements IBaseService<T> {
           $set: dataUpdate
         })
         .lean()
-
-      // if (index && result != null) {
-      // 	this._esInstance.indexMany(result);
-      // }
 
       return result
     } catch (error) {

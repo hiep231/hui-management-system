@@ -63,7 +63,6 @@ const CardHuiGroup = ({ parentGroup, childGroups, stats }: IProp) => {
         onClick={goToChildGroups}
         className="bg-white rounded-2xl shadow-sm border border-gray-500 relative overflow-hidden active:scale-[0.99] transition-all duration-200 group"
       >
-        {/* Header Card */}
         <div className="p-4 border-b border-gray-50 flex justify-between items-start bg-gradient-to-r from-gray-400 to-gray-100">
           <div className="flex-1 min-w-0 pr-2">
             <h3 className="text-lg font-bold text-gray-900 truncate">
@@ -90,9 +89,7 @@ const CardHuiGroup = ({ parentGroup, childGroups, stats }: IProp) => {
           </button>
         </div>
 
-        {/* Body: Số liệu chính */}
         <div className="p-4">
-          {/* Tiền Hụi & Thảo */}
           <div className="flex items-center justify-between mb-4">
             <div>
               <p className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">
@@ -112,7 +109,6 @@ const CardHuiGroup = ({ parentGroup, childGroups, stats }: IProp) => {
             </div>
           </div>
 
-          {/* Grid Stats */}
           <div className="grid grid-cols-3 gap-2">
             <div className="bg-blue-50 rounded-lg p-2 flex flex-col items-center justify-center border border-blue-100">
               <Layers size={16} className="text-blue-500 mb-1" />
@@ -136,7 +132,6 @@ const CardHuiGroup = ({ parentGroup, childGroups, stats }: IProp) => {
           </div>
         </div>
 
-        {/* Footer Action */}
         <div className="bg-gray-50 p-2 flex justify-center items-center border-t border-gray-100">
           <span className="text-xs font-medium text-gray-500 flex items-center gap-1 group-hover:text-primary transition-colors">
             Xem chi tiết <ChevronRight size={14} />
@@ -144,7 +139,6 @@ const CardHuiGroup = ({ parentGroup, childGroups, stats }: IProp) => {
         </div>
       </div>
 
-      {/* Delete Modal */}
       <Modal
         visible={isDeleteModalOpen}
         title="Xóa nhóm hụi"

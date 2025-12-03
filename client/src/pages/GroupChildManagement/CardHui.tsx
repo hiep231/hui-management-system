@@ -39,7 +39,6 @@ const CardHui = ({ childGroup, parentGroup }: TCardHuiProps) => {
     });
   };
 
-  // Tính toán trạng thái (Ví dụ: dựa trên số chân đã hốt)
   const activeLegs =
     childGroup.members?.filter((m) => m.legsClaimed > 0).length || 0;
   const totalLegs = childGroup.totalLegsRegistered || 12;
@@ -51,7 +50,6 @@ const CardHui = ({ childGroup, parentGroup }: TCardHuiProps) => {
         onClick={goToDetail}
         className="group bg-white rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden active:scale-[0.98] transition-all duration-200"
       >
-        {/* Decorative Left Border */}
         <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-primary"></div>
 
         <div className="p-4 pl-5">
@@ -68,7 +66,6 @@ const CardHui = ({ childGroup, parentGroup }: TCardHuiProps) => {
                 </span>
               </div>
 
-              {/* Money Info Grid */}
               <div className="flex gap-4">
                 <div>
                   <p className="text-[10px] text-gray-400 uppercase font-medium">
@@ -89,7 +86,6 @@ const CardHui = ({ childGroup, parentGroup }: TCardHuiProps) => {
               </div>
             </div>
 
-            {/* Navigation Icon */}
             <div className="flex flex-col items-end justify-between h-full min-h-[80px]">
               <ChevronRight
                 className="text-gray-300 group-hover:text-primary transition-colors"
@@ -99,7 +95,6 @@ const CardHui = ({ childGroup, parentGroup }: TCardHuiProps) => {
           </div>
         </div>
 
-        {/* Actions Footer - Tách biệt để dễ bấm */}
         <div className="grid grid-cols-2 border-t border-gray-100 bg-gray-50/50">
           <button
             onClick={(e) => {
@@ -122,7 +117,6 @@ const CardHui = ({ childGroup, parentGroup }: TCardHuiProps) => {
         </div>
       </div>
 
-      {/* --- Modals --- */}
       <EditFundModal
         visible={isEditOpen}
         onClose={() => setIsEditOpen(false)}

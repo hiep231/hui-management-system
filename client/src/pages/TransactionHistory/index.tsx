@@ -114,7 +114,6 @@ const TransactionHistory = () => {
           <h1 className="text-xl font-bold text-gray-900">Sổ Thu Chi</h1>
         </div>
 
-        {/* Filter Tabs */}
         <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg mb-2">
           {(["day", "month", "year"] as const).map((mode) => (
             <button
@@ -135,7 +134,6 @@ const TransactionHistory = () => {
           ))}
         </div>
 
-        {/* Date Picker Bar */}
         <div className="flex items-center justify-between py-2 border-t border-dashed border-gray-200">
           <div className="flex items-center gap-2 text-gray-600 font-medium text-sm">
             <CalendarIcon size={16} />

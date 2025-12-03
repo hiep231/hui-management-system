@@ -11,10 +11,9 @@ import { CycleModel } from './cycle.model'
     allowMixed: Severity.ALLOW
   }
 })
-// Đánh Index để tối ưu Query
-@index({ cycle: 1, player: 1 }, { background: true }) // Tìm giao dịch của user trong 1 kỳ
-@index({ fund: 1, player: 1 }, { background: true }) // Tìm tất cả giao dịch của user trong 1 dây
-@index({ paidAt: 1 }, { background: true }) // Thống kê theo ngày
+@index({ cycle: 1, player: 1 }, { background: true })
+@index({ fund: 1, player: 1 }, { background: true })
+@index({ paidAt: 1 }, { background: true })
 @index({ status: 1 }, { background: true })
 export class TransactionModel extends BaseModel {
   @prop({ ref: () => FundModel, required: true })
@@ -24,16 +23,16 @@ export class TransactionModel extends BaseModel {
   cycle!: Ref<CycleModel>
 
   @prop({ required: true })
-  cycleNumber!: number // Lưu dư thừa để query nhanh không cần populate Cycle
+  cycleNumber!: number
 
   @prop({ ref: () => PlayerModel, required: true })
   player!: Ref<PlayerModel>
 
   @prop({ required: true })
-  amountDue!: number // Số tiền phải đóng
+  amountDue!: number
 
   @prop({ required: true, default: 0 })
-  amountPaid!: number // Số tiền đã đóng
+  amountPaid!: number
 
   @prop({ required: true, default: 'PENDING' })
   status!: 'PAID' | 'PENDING'
@@ -41,7 +40,6 @@ export class TransactionModel extends BaseModel {
   @prop()
   paidAt?: Date
 
-  // Loại giao dịch: Thu tiền hụi (INCOME) hay Trả tiền hốt (EXPENSE) - Mở rộng cho tương lai
   @prop({ default: 'COLLECTION' })
   type!: 'COLLECTION' | 'PAYOUT'
 

@@ -13,7 +13,6 @@ import { MESSAGES_CODE } from 'src/shares/constants/status.constants'
 import { TransactionModel } from '../models/transaction.model'
 
 interface ICycleService {
-  // CRUD Cycle
   createCycle(dto: CreateCycleDTO): Promise<CycleModel>
   getAllCycles(): Promise<CycleModel[]>
   getCyclesByFund(fundId: string): Promise<CycleModel[]>
@@ -21,7 +20,6 @@ interface ICycleService {
   updateCycle(dto: UpdateCycleDTO): Promise<CycleModel>
   closeCycle(cycleId: string): Promise<{ message: string }>
 
-  // Business: Claim / Hốt
   claim(dto: ClaimCycleDTO): Promise<IJsonResponse<any>>
   unclaim(dto: { cycleId: string; fundId: string }): Promise<IJsonResponse<any>>
   getStats(dateString: string, type: 'day' | 'month' | 'year')
@@ -116,9 +114,6 @@ export class CycleService extends BaseService<CycleModel> implements ICycleServi
       const cycle = await this.cycleModel.findById(cycleId)
       if (!cycle) throw new NotFoundException('Không tìm thấy kỳ hụi')
 
-      // --- [SỬA ĐỔI]: Cho phép nhiều người hốt, không throw lỗi nếu đã có người hốt ---
-
-      // Kiểm tra xem người này đã hốt trong kỳ này chưa (tránh hốt 2 lần trong 1 kỳ)
       const alreadyClaimed = cycle.claimers.some((c) => c.player.toString() === playerId)
       if (alreadyClaimed) {
         throw new BadRequestException('Người chơi này đã hốt trong kỳ này rồi!')
@@ -133,7 +128,6 @@ export class CycleService extends BaseService<CycleModel> implements ICycleServi
         })
         .lean()
 
-      // Map: PlayerId -> Số chân đã hốt (Dead legs) từ các kỳ trước
       const deadLegsMap = new Map<string, number>()
       previousCycles.forEach((c) => {
         if (c.claimers && c.claimers.length > 0) {
@@ -146,41 +140,31 @@ export class CycleService extends BaseService<CycleModel> implements ICycleServi
       })
 
       // 2. Tính toán thông tin người hốt mới
-      const fundAmount = fund.amount // A (Tiền hụi gốc)
-      const fee = fund.fee // E (Tiền thảo chủ hụi lấy)
+      const fundAmount = fund.amount
+      const fee = fund.fee
 
-      // Tính tiền thực nhận cho người hốt này (tạm tính dựa trên giả định chỉ có 1 người hốt để lấy số liệu cơ sở)
-      // Thực tế: Received = (Tổng thu từ mọi người) - Fee
-      // Tuy nhiên ta cần cập nhật danh sách claimers trước để biết có bao nhiêu người hốt
-
-      // --- Thêm người hốt mới vào danh sách tạm thời ---
       const newClaimer = {
         player: playerId as any,
         legsClaimed: 1,
-        paidAmount: bidAmount, // Tiền kêu của người này
-        amountReceived: 0, // Sẽ tính sau
+        paidAmount: bidAmount,
+        amountReceived: 0,
         claimedAt: new Date()
       }
       const currentClaimers = [...cycle.claimers, newClaimer]
       const currentClaimerIds = currentClaimers.map((c) => c.player.toString())
 
-      // --- [QUAN TRỌNG]: Xác định tiền kêu (B) dùng để tính toán ---
-      // Yêu cầu: "chỉ lấy số tiền hốt của người đầu tiên để tính cho các người khác"
       const firstClaimer = currentClaimers[0]
-      const baseBidAmount = firstClaimer.paidAmount // Đây là B dùng để trừ cho chân sống
-      const numberOfWinners = currentClaimers.length // Hệ số nhân tiền đóng
+      const baseBidAmount = firstClaimer.paidAmount
+      const numberOfWinners = currentClaimers.length
 
-      // 3. Tính toán tiền đóng (Payments) cho toàn bộ thành viên
       const payments: PaymentDetail[] = []
       const newTransactions = []
 
-      // Biến tính tổng thu của 1 suất hốt (để tính amountReceived)
       let unitTotalCollected = 0
 
       for (const member of fund.members) {
         const mPlayerId = member.player.toString()
 
-        // Những người đang hốt trong kỳ này KHÔNG đóng tiền cho chính mình và những người cùng hốt
         if (currentClaimerIds.includes(mPlayerId)) continue
 
         const totalLegs = member.initialLegs
@@ -189,25 +173,19 @@ export class CycleService extends BaseService<CycleModel> implements ICycleServi
 
         if (livingLegs < 0) continue
 
-        // Logic tính tiền CƠ SỞ (cho 1 suất hốt):
-        // Chân chết: Đóng đủ A
-        // Chân sống: Đóng A - B_first (Theo yêu cầu)
         const unitAmountFromDead = deadLegs * fundAmount
         const unitAmountFromLiving = livingLegs * (fundAmount - baseBidAmount)
         const unitTotalPay = unitAmountFromDead + unitAmountFromLiving
 
-        // Tổng tiền người này phải đóng = Tiền cơ sở * Số lượng người hốt
         const finalTotalPay = unitTotalPay * numberOfWinners
 
         if (finalTotalPay > 0) {
-          // a. Lưu vào payment để hiển thị
           payments.push({
             player: mPlayerId as any,
             amountDue: finalTotalPay,
-            isPaid: false // Reset trạng thái đóng tiền khi có người hốt mới (hoặc logic phức tạp hơn là giữ nguyên nếu đã đóng phần cũ)
+            isPaid: false
           })
 
-          // b. Tạo Transaction (Ghi đè lại toàn bộ transaction của kỳ này)
           newTransactions.push({
             fund: fundId,
             cycle: cycleId,
@@ -224,27 +202,21 @@ export class CycleService extends BaseService<CycleModel> implements ICycleServi
         }
       }
 
-      // 4. Cập nhật lại amountReceived cho TẤT CẢ người hốt trong kỳ này
-      // Giả sử tổng thu được chia đều hoặc mỗi người nhận đúng phần của mình (Unit Total - Fee)
       const unitReceivedAmount = unitTotalCollected - fee
 
       const updatedClaimers = currentClaimers.map((c) => ({
         ...c,
-        amountReceived: unitReceivedAmount // Mỗi người hốt nhận được phần tiền thu được từ 1 suất đóng
+        amountReceived: unitReceivedAmount
       }))
 
-      // 5. Cập nhật Cycle
       cycle.claimers = updatedClaimers
-      cycle.payments = payments // Lưu danh sách người đóng mới
+      cycle.payments = payments
 
       await cycle.save({ session })
 
-      // 6. Cập nhật Transactions: Xóa cũ, Thêm mới
-      // Xóa các transaction cũ của kỳ này (để tránh duplicate hoặc sai số liệu khi số người hốt thay đổi)
       await this.transactionModel.deleteMany({ cycle: cycleId }).session(session)
 
       if (newTransactions.length > 0) {
-        // Dùng insertMany thay vì create cho mảng
         await this.transactionModel.insertMany(newTransactions, { session })
       }
 
@@ -276,13 +248,13 @@ export class CycleService extends BaseService<CycleModel> implements ICycleServi
       const cycle = await this.cycleModel.findById(dto.cycleId)
       if (!cycle) throw new NotFoundException('Cycle not found')
 
-      // 1. Reset Cycle
+      // Reset Cycle
       cycle.claimers = []
       cycle.payments = []
       cycle.closed = false
       await cycle.save({ session })
 
-      // 2. Xóa sạch Transaction
+      // Xóa sạch Transaction
       await this.transactionModel.deleteMany({ cycle: dto.cycleId }).session(session)
 
       await session.commitTransaction()

@@ -4,25 +4,25 @@ import { IsString, IsNotEmpty, IsNumber, Min, IsDateString, IsOptional, IsArray,
 import { PlayerLegsDTO } from 'src/modules/player/dto/player.dto'
 
 export class CreateFundDTO {
-  @ApiProperty({ example: 'Dây Hụi Tháng 11/2025' }) // 2. Thêm ví dụ
+  @ApiProperty({ example: 'Dây Hụi Tháng 11/2025' })
   @IsString()
   @IsNotEmpty()
   name: string
 
-  @ApiProperty({ example: 500000 }) // A: Tiền hụi 1 chân
+  @ApiProperty({ example: 500000 })
   @IsNumber()
   @Min(1)
-  amount: number // A
+  amount: number
 
-  @ApiProperty({ example: 100000 }) // B/E: Tiền thảo hoặc tiền bỏ ra
+  @ApiProperty({ example: 100000 })
   @IsNumber()
   @Min(0)
-  fee: number // B/E: tiền bỏ ra để hốt / tiền thảo
+  fee: number
 
   @ApiProperty({ example: 12 })
   @IsNumber()
   @Min(1)
-  totalCycles: number // Tổng số kỳ (thay thế totalMembers)
+  totalCycles: number
 
   @ApiProperty({ example: '2025-11-01T00:00:00.000Z' })
   @IsDateString()
@@ -35,7 +35,7 @@ export class CreateFundDTO {
 }
 
 export class UpdateFundDTO {
-  @ApiProperty({ example: '60c72b2f9b1d8c001f8e4a9e' }) // Thêm ví dụ ID
+  @ApiProperty({ example: '60c72b2f9b1d8c001f8e4a9e' })
   @IsString()
   @IsNotEmpty()
   fundId: string
@@ -58,16 +58,15 @@ export class UpdateFundDTO {
   @ApiProperty({ example: 12, required: false })
   @IsOptional()
   @IsNumber()
-  totalCycles?: number // Cập nhật totalCycles (thay thế totalMembers)
+  totalCycles?: number
 }
 
-// DTO dùng để tạo Fund kèm danh sách thành viên ban đầu
 export class CreateFundWithMembersDTO extends CreateFundDTO {
   @ApiProperty({
     example: [
       { playerId: '60c72b2f9b1d8c001f8e4a9e', legs: 1 },
       { playerId: '60c72b2f9b1d8c001f8e4a9f', legs: 2 },
-      { playerId: '60c72b2f9b1d8c001f8e4a9a', legs: 9 } // Tổng legs phải = 12
+      { playerId: '60c72b2f9b1d8c001f8e4a9a', legs: 9 }
     ],
     type: [PlayerLegsDTO]
   })

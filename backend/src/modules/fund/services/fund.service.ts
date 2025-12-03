@@ -10,7 +10,7 @@ import { PlayerModel } from 'src/modules/player/models/player.model'
 import { JsonResponse } from 'src/shares/controllers/json.response'
 
 interface FundGroup {
-  _id: string // The fund name
+  _id: string
   funds: FundModel[]
   count: number
 }
@@ -35,7 +35,6 @@ export class FundService extends BaseService<FundModel> implements IFundService 
     super(fundModel)
   }
 
-  // Tạo 1 dây hụi mới (chỉ Fund, không có member ban đầu - ít dùng)
   async createFund(dto: CreateFundDTO) {
     const exist = await this.fundModel.findOne({ name: dto.name, startDate: dto.startDate })
     if (exist) throw new BadRequestException('Đã tồn tại dây hụi trùng tên và ngày bắt đầu')
@@ -52,10 +51,9 @@ export class FundService extends BaseService<FundModel> implements IFundService 
       totalCycles: dto.totalCycles,
       startDate: start,
       endDate: end,
-      totalLegsRegistered: 0 // Mới tạo chưa có thành viên
+      totalLegsRegistered: 0
     })
 
-    // Tạo các cycle tương ứng (12 tháng)
     const cycles = []
     for (let i = 1; i <= dto.totalCycles; i++) {
       cycles.push({
@@ -69,15 +67,12 @@ export class FundService extends BaseService<FundModel> implements IFundService 
     return fund
   }
 
-  // Tạo Fund kèm danh sách thành viên ban đầu (Yêu cầu 3.1)
   async createFundWithMembers(dto: CreateFundWithMembersDTO) {
     const { name, amount, fee, totalCycles, startDate, endDate, players } = dto
 
-    // 1. Kiểm tra tồn tại
     const exist = await this.fundModel.findOne({ name, startDate: new Date(startDate) })
     if (exist) throw new BadRequestException('Đã tồn tại dây hụi trùng tên và ngày bắt đầu')
 
-    // 2. Kiểm tra tổng số chân (Yêu cầu 1: mỗi dây phải đủ 12)
     const totalLegsRegistered = players.reduce((sum, p) => sum + p.legs, 0)
     if (totalLegsRegistered !== totalCycles) {
       throw new BadRequestException(
@@ -85,7 +80,6 @@ export class FundService extends BaseService<FundModel> implements IFundService 
       )
     }
 
-    // 3. Kiểm tra Player tồn tại
     const playerIds = players.map((p) => p.playerId)
     const existingPlayers = await this.playerModel.find({ _id: { $in: playerIds } }).lean()
     if (existingPlayers.length !== playerIds.length) {
@@ -105,7 +99,6 @@ export class FundService extends BaseService<FundModel> implements IFundService 
     const start = new Date(startDate)
     const end = endDate ? new Date(endDate) : new Date(start.getTime() + totalCycles * 30 * 24 * 3600 * 1000)
 
-    // 4. Tạo Fund
     const fund = await this.fundModel.create({
       name,
       amount,
@@ -117,7 +110,6 @@ export class FundService extends BaseService<FundModel> implements IFundService 
       totalLegsRegistered
     })
 
-    // 5. Tạo các Cycles tương ứng
     const cycles = []
     for (let i = 1; i <= totalCycles; i++) {
       cycles.push({
@@ -131,9 +123,7 @@ export class FundService extends BaseService<FundModel> implements IFundService 
     return fund
   }
 
-  // Lấy tất cả dây hụi
   async getAllFunds() {
-    // Populate FundMember.player
     return this.fundModel.find({ isDelete: false }).populate('members.player').sort({ createdAt: -1 }).lean()
   }
 
@@ -146,7 +136,6 @@ export class FundService extends BaseService<FundModel> implements IFundService 
     return { ...fund, cycles }
   }
 
-  // Group theo name (dây trùng tên thành nhóm)
   async getGroupedFunds(): Promise<any> {
     const groups = await this.fundModel.aggregate([
       {
@@ -157,24 +146,23 @@ export class FundService extends BaseService<FundModel> implements IFundService 
       {
         $group: {
           _id: {
-            amount: '$amount', // Group theo số tiền
-            fee: '$fee', // Group theo tiền thảo
-            totalCycles: '$totalCycles', // Group theo tổng số kỳ
-            startYear: { $year: '$startDate' }, // Group theo năm bắt đầu
-            startMonth: { $month: '$startDate' } // Group theo tháng bắt đầu
+            amount: '$amount',
+            fee: '$fee',
+            totalCycles: '$totalCycles',
+            startYear: { $year: '$startDate' },
+            startMonth: { $month: '$startDate' }
           },
-          funds: { $push: '$$ROOT' }, // Gom các dây hụi con (Nhóm 1, Nhóm 2...)
+          funds: { $push: '$$ROOT' },
           count: { $sum: 1 },
 
-          // Lấy ra các trường để sort (lấy của item đầu tiên trong nhóm)
           amount: { $first: '$amount' },
           startDate: { $first: '$startDate' }
         }
       },
       {
         $sort: {
-          amount: -1, // Sắp xếp theo số tiền giảm dần
-          startDate: -1, // Sắp xếp theo ngày bắt đầu mới nhất
+          amount: -1,
+          startDate: -1,
           count: -1
         }
       }
@@ -182,12 +170,10 @@ export class FundService extends BaseService<FundModel> implements IFundService 
     return groups
   }
 
-  // Cập nhật thông tin dây hụi
   async updateFund(dto: UpdateFundDTO) {
     const fund = await this.fundModel.findById(dto.fundId)
     if (!fund) throw new NotFoundException('Không tìm thấy dây hụi')
 
-    // Logic kiểm tra totalCycles: Nếu thay đổi, cần kiểm tra lại tổng chân đã đăng ký
     if (dto.totalCycles && fund.totalLegsRegistered > dto.totalCycles) {
       throw new BadRequestException(`Không thể giảm tổng số kỳ. Tổng chân đã đăng ký là ${fund.totalLegsRegistered}`)
     }
@@ -197,7 +183,6 @@ export class FundService extends BaseService<FundModel> implements IFundService 
     return fund
   }
 
-  // Xóa dây hụi (soft delete)
   async deleteFund(fundId: string) {
     const fund = await this.fundModel.findById(fundId)
     if (!fund) throw new NotFoundException('Không tìm thấy dây hụi')

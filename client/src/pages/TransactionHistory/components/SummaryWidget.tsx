@@ -11,7 +11,6 @@ const SummaryWidget = ({ revenue, expenditure }: Props) => {
 
   return (
     <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 mb-4">
-      {/* Balance (Dòng tiền ròng) */}
       <div className="mb-4 text-center border-b border-dashed border-gray-200 pb-4">
         <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-1">
           Dòng tiền thực tế
@@ -26,9 +25,7 @@ const SummaryWidget = ({ revenue, expenditure }: Props) => {
         </div>
       </div>
 
-      {/* Detail Grid */}
       <div className="grid grid-cols-2 gap-4">
-        {/* Thu */}
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center text-green-600">
             <ArrowDownCircle size={20} />
@@ -41,7 +38,6 @@ const SummaryWidget = ({ revenue, expenditure }: Props) => {
           </div>
         </div>
 
-        {/* Chi */}
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center text-red-600">
             <ArrowUpCircle size={20} />

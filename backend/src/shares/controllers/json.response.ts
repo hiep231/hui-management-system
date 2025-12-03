@@ -1,24 +1,20 @@
 import { IPageResponse, ITimeResponse, IMappingObjectResponse } from '../services/mongo/base.service.interface'
 import { MESSAGES_CODE } from '../constants/status.constants'
 
-/**
- * Interface thống nhất cho tất cả các API Response
- */
 export interface IJsonResponse<T> {
   success: boolean
   message: string | null
-  from?: number // Bắt đầu từ bản ghi nào (cho danh sách)
-  size?: number // Số lượng bản ghi mỗi trang (cho danh sách)
-  total?: number // Tổng số bản ghi trong data (cho danh sách)
-  totalRecords?: number // Tổng số bản ghi trong DB (cho danh sách)
-  data: T | T[] | null // Dữ liệu trả về (object hoặc array)
-  moreInfo?: any // Thông tin thêm, ví dụ: { formula: {...} }
-  page?: IPageResponse // Thông tin phân trang chi tiết
-  time?: ITimeResponse // Thời gian xử lý
+  from?: number
+  size?: number
+  total?: number
+  totalRecords?: number
+  data: T | T[] | null
+  moreInfo?: any
+  page?: IPageResponse
+  time?: ITimeResponse
   mappingObject?: IMappingObjectResponse<any>
 }
 
-// Cập nhật lại lớp JsonResponse để tuân thủ cấu trúc mới
 export class JsonResponse<T> implements IJsonResponse<T> {
   public success: boolean
   public data: T | T[] | null
@@ -38,7 +34,6 @@ export class JsonResponse<T> implements IJsonResponse<T> {
     this.message = message
   }
 
-  // Dành cho response dạng danh sách (getList)
   setList(list: T[], totalRecords: number, paging: { page: number; pageSize: number }, time?: ITimeResponse) {
     this.data = list
     this.from = paging.page * paging.pageSize
@@ -49,7 +44,6 @@ export class JsonResponse<T> implements IJsonResponse<T> {
     return this
   }
 
-  // Dành cho response khi có lỗi
   static error(message: string, data: any = null, status: number = 400): IJsonResponse<any> {
     return {
       success: false,
@@ -62,7 +56,6 @@ export class JsonResponse<T> implements IJsonResponse<T> {
     }
   }
 
-  // Dành cho response thành công
   static success<T>(
     data: T | T[],
     message: string = MESSAGES_CODE.GET_SUCCESS,

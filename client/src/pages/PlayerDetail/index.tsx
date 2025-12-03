@@ -57,7 +57,6 @@ const PlayerDetail = () => {
     <PassDownProps value={dropdownProps}>
       <div className="bg-gray-50 min-h-screen flex flex-col">
         <Header className="bg-white shadow-sm sticky top-0 z-50 !pb-0">
-          {/* Top Nav */}
           <div className="flex items-center gap-3 mb-4">
             <Button
               variant="ghost"
@@ -71,7 +70,6 @@ const PlayerDetail = () => {
             </h1>
           </div>
 
-          {/* Scrollable Tabs */}
           {isLoading ? (
             <div className="flex gap-2 pb-3 overflow-hidden">
               {[1, 2, 3].map((i) => (

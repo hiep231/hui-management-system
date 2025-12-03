@@ -32,7 +32,7 @@ export class HttpInterceptorFilter implements NestInterceptor {
       if (!token) {
         throw new HttpException('Token Invalid', HttpStatus.UNAUTHORIZED)
       }
-      // decode token
+
       const jwtDecode = this.jwtService.decode(token)
       const jwtObject: JwtObject = JSON.parse(JSON.stringify(jwtDecode))
       if (jwtObject) {
@@ -49,7 +49,6 @@ export class HttpInterceptorFilter implements NestInterceptor {
       if (authorization) {
         const [, token] = authorization.split(' ')
         if (token) {
-          // decode token
           const jwtDecode = this.jwtService.decode(token)
           const jwtObject: JwtObject = JSON.parse(JSON.stringify(jwtDecode))
           if (jwtObject) {
@@ -68,7 +67,6 @@ export class HttpInterceptorFilter implements NestInterceptor {
 
     const anonymous = this.reflector.getAllAndOverride('anonymous', [context.getHandler(), context.getClass()])
     if (anonymous) {
-      // log
       const jwtObject: JwtObject = this.getUserContextAnonymous(request.headers.authorization)
       if (jwtObject) {
         this.loggerService.logRequest(
@@ -85,9 +83,8 @@ export class HttpInterceptorFilter implements NestInterceptor {
       try {
         const jwtObject: JwtObject = this.getUserContext(request.headers.authorization)
         if (jwtObject) {
-          // add userContext to payload
           request.body[USER_CONTEXT] = jwtObject
-          // log
+
           this.loggerService.logRequest(
             `${request.method} ${request.url}`,
             JSON.stringify(jwtObject),
@@ -99,17 +96,11 @@ export class HttpInterceptorFilter implements NestInterceptor {
       }
     }
 
-    // add context case upload file
     if (request.headers['content-type'] && request.headers['content-type'].includes('multipart/form-data')) {
       request[USER_CONTEXT] = request.body[USER_CONTEXT]
     }
 
-    // handle request
     return next.handle().pipe(
-      // timeout(5000), // Set timeout of 5 seconds
-      // catchError((err) => {
-      //   throw new HttpException('Request timed out', HttpStatus.REQUEST_TIMEOUT);
-      // }),
       tap((responseBody: any) => {
         if (responseBody?.success == false) {
           throw new HttpException(responseBody?.message, 200)

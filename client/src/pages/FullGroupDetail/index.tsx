@@ -83,7 +83,6 @@ const FullGroupDetail = () => {
             </div>
 
             <div className="flex gap-1">
-              {/* Nút Kết thúc dây hụi */}
               {isActive && (
                 <button
                   onClick={() => setIsCloseModalOpen(true)}
@@ -94,7 +93,6 @@ const FullGroupDetail = () => {
                 </button>
               )}
 
-              {/* Nút Sửa */}
               <button
                 onClick={() => setIsEditOpen(true)}
                 className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors"

@@ -17,7 +17,6 @@ const PaymentActionButton = ({ isPaid, isUpdating, onPay, onUndo }: Props) => {
       >
         <Check size={16} strokeWidth={3} />
         <span className="font-bold text-sm">Xong</span>
-        {/* Icon hoàn tác nhỏ bên cạnh */}
         <RotateCcw size={12} className="ml-1 text-green-500 opacity-50" />
       </button>
     );
@@ -27,7 +26,6 @@ const PaymentActionButton = ({ isPaid, isUpdating, onPay, onUndo }: Props) => {
     <button
       onClick={onPay}
       disabled={isUpdating}
-      // Giảm chiều cao từ h-14 xuống h-10, bo tròn rounded-full
       className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-full shadow-md shadow-blue-200 active:scale-95 transition-all hover:bg-blue-700"
     >
       <Banknote size={18} />

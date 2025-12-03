@@ -2,33 +2,31 @@ import { getModelForClass, index, ModelOptions, prop, Ref, Severity } from '@typ
 import { BaseModel, schemaOptions } from 'src/shares/models/base.model'
 import { FundModel } from 'src/modules/fund/models/fund.model'
 import { PlayerModel } from 'src/modules/player/models/player.model'
-import { Exclude } from 'class-transformer' // Thêm Exclude nếu bạn dùng class-transformer
+import { Exclude } from 'class-transformer'
 
-// Class phụ để lưu chi tiết người phải đóng tiền
 export class PaymentDetail {
   @prop({ ref: () => PlayerModel, required: true })
   player!: Ref<PlayerModel>
 
   @prop({ required: true })
-  amountDue!: number // Số tiền phải đóng
+  amountDue!: number
 
   @prop({ default: false })
-  isPaid!: boolean // Trạng thái đã đóng chưa
+  isPaid!: boolean
 }
 
-// Class phụ lưu chi tiết người hốt
 export class ClaimerDetail {
   @prop({ ref: () => PlayerModel, required: true })
   player!: Ref<PlayerModel>
 
   @prop({ required: true })
-  legsClaimed!: number // [cite: 3645] Giữ lại field này vì logic cũ có dùng
+  legsClaimed!: number
 
   @prop({ required: true })
-  paidAmount!: number // Tiền kêu (B)
+  paidAmount!: number
 
   @prop({ required: true })
-  amountReceived!: number // Thực nhận
+  amountReceived!: number
 
   @prop({ default: Date.now })
   claimedAt!: Date

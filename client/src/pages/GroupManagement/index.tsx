@@ -12,12 +12,10 @@ const GroupManagement = () => {
   const navigate = useNavigate();
   const { data: groupedFunds = [], isLoading, isError } = useGroupedFunds();
 
-  // State Filter
   const [activeTab, setActiveTab] = useState<"active" | "history">("active");
   const [filterAmount, setFilterAmount] = useState("");
   const [filterYear, setFilterYear] = useState("");
 
-  // Generate Year Options
   const yearOptions = useMemo(() => {
     const currentYear = new Date().getFullYear();
     return [
@@ -28,7 +26,6 @@ const GroupManagement = () => {
     ];
   }, []);
 
-  // Filter Logic (Giữ nguyên logic cũ)
   const filteredGroups = useMemo(() => {
     return groupedFunds
       .map((group: any) => {
@@ -48,7 +45,6 @@ const GroupManagement = () => {
   }, [groupedFunds, activeTab, filterAmount, filterYear]);
 
   const renderGroups = () => {
-    // (Giữ nguyên logic render cũ)
     return filteredGroups.map((group: any) => {
       const { amount, fee, startMonth, startYear } = group._id;
       const groupName = `Dây ${
@@ -92,7 +88,6 @@ const GroupManagement = () => {
 
   return (
     <div className="bg-gray-50 min-h-screen flex flex-col">
-      {/* --- HEADER ĐÃ SỬA --- */}
       <Header className="bg-white border-b border-gray-200 !pb-0 !pr-0">
         <div className="flex flex-col gap-4 pb-5">
           <div className="flex items-center justify-between pr-16">
@@ -155,7 +150,7 @@ const GroupManagement = () => {
             Lịch sử
           </button>
         </div>
-        {/* Filter Bar (Giữ nguyên) */}
+
         <div className="flex gap-3 mb-4 bg-white p-3 rounded-xl shadow-sm border border-gray-100">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -185,7 +180,6 @@ const GroupManagement = () => {
           </div>
         </div>
 
-        {/* Content List */}
         {isLoading ? (
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (

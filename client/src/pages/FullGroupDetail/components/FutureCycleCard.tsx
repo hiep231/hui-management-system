@@ -23,7 +23,6 @@ const FutureCycleCard = ({ cycle }: Props) => {
           </div>
         </div>
 
-        {/* Action Hint */}
         <div className="flex items-center gap-1 text-xs font-medium text-gray-400 group-hover:text-blue-500 transition-colors">
           <span>Mở</span>
           <ChevronDown size={16} />

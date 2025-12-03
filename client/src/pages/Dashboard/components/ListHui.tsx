@@ -70,12 +70,10 @@ const ListHui = () => {
                 </div>
               </div>
 
-              {/* Footer nhỏ: Trạng thái (Giả lập) */}
               <div className="mt-3 pt-3 border-t border-gray-50 flex justify-between items-center pl-2">
                 <div className="flex items-center gap-1 text-xs text-gray-400">
                   <Clock size={12} /> Đang hoạt động
                 </div>
-                {/* Nếu có dữ liệu ngày khui, hiển thị ở đây */}
                 <div className="text-xs font-medium text-primary">
                   Kỳ tiếp theo: 15/{new Date().getMonth() + 1}
                 </div>

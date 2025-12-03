@@ -26,31 +26,26 @@ const SelectWinnerModal = ({
       .map((m) => {
         const playerId = getSafeId(m.player);
 
-        // 1. Tính số chân ĐÃ HỐT trong QUÁ KHỨ (Các kỳ trước kỳ này)
-        // Duyệt qua tất cả các cycle có số thứ tự nhỏ hơn kỳ hiện tại
         const pastClaimedCount = cycles
           .filter((c) => c.cycleNumber < targetCycleNumber)
           .reduce((total, cycle) => {
             const winners = cycle.claimers || [];
-            // Tìm xem người này có hốt trong kỳ đó không
             const winRecord = winners.find(
               (w: any) => getSafeId(w.player) === playerId
             );
             return total + (winRecord ? winRecord.legsClaimed || 1 : 0);
           }, 0);
 
-        // 2. Tính số chân ĐANG chọn hốt trong kỳ này (nếu đang chọn thêm người thứ 2, 3)
         const currentClaimingCount = currentCycleClaimers
           .filter((c) => getSafeId(c.player) === playerId)
           .reduce((sum, c) => sum + (c.legsClaimed || 1), 0);
 
-        // 3. Chân sống thực tế = Tổng chân - Đã hốt quá khứ - Đang hốt hiện tại
         const realLiveLegs =
           m.initialLegs - pastClaimedCount - currentClaimingCount;
 
         return {
           ...m,
-          realLiveLegs: Math.max(0, realLiveLegs), // Không để âm
+          realLiveLegs: Math.max(0, realLiveLegs),
         };
       })
       .filter((m) => {
@@ -60,7 +55,6 @@ const SelectWinnerModal = ({
         return name.includes(search);
       })
       .sort((a, b) => {
-        // Ưu tiên người còn chân sống lên đầu
         if (a.realLiveLegs > 0 && b.realLiveLegs === 0) return -1;
         if (a.realLiveLegs === 0 && b.realLiveLegs > 0) return 1;
         return 0;

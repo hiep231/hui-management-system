@@ -65,7 +65,6 @@ const CardUser = ({ player, playerGroups }: TProp) => {
       >
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-4">
-            {/* Avatar */}
             <div
               className={cn(
                 "w-14 h-14 rounded-full flex items-center justify-center text-xl font-bold shadow-inner",
@@ -91,7 +90,6 @@ const CardUser = ({ player, playerGroups }: TProp) => {
           />
         </div>
 
-        {/* Swipe Actions / Buttons */}
         <div className="mt-4 flex gap-2 border-t border-gray-100 pt-3">
           <button
             onClick={(e) => {

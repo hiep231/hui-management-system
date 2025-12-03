@@ -4,19 +4,18 @@ import { BaseModel, schemaOptions } from 'src/shares/models/base.model'
 import { PlayerModel } from 'src/modules/player/models/player.model'
 import { CycleModel } from 'src/modules/cycle/models/cycle.model'
 
-// Sub-document để lưu thông tin thành viên (Player) trong từng Dây Hụi (Fund)
 export class FundMember {
   @prop({ ref: () => PlayerModel, required: true })
   player!: Ref<PlayerModel>
 
   @prop({ required: true, default: 1 })
-  initialLegs!: number // Tổng số chân đăng ký ban đầu (F + G)
+  initialLegs!: number
 
   @prop({ required: true, default: 0 })
-  legsClaimed!: number // Tổng số chân đã hốt (F)
+  legsClaimed!: number
 
   @prop({ type: () => [Number], default: [] })
-  claimedCycleNumbers!: number[] // Các kỳ (cycleNumber) đã hốt
+  claimedCycleNumbers!: number[]
 }
 
 @Exclude()
@@ -29,25 +28,25 @@ export class FundMember {
 @index({ name: 'text' })
 export class FundModel extends BaseModel {
   @prop({ required: true, trim: true })
-  name!: string // tên nhóm hụi (tên dây)
+  name!: string
 
   @prop({ required: true })
-  amount!: number // A: số tiền của hụi (cho 1 chân)
+  amount!: number
 
   @prop({ required: true })
-  fee!: number // Tiền Bỏ ra để Hốt (B), hoặc có thể dùng cho tiền thảo (E)
+  fee!: number
 
   @prop({ required: true, default: 12 })
-  totalCycles!: number // Tổng số kỳ (Thường là 12)
+  totalCycles!: number
 
   @prop({ default: 0 })
-  totalLegsRegistered!: number // Tổng số chân đã đăng ký (phải = totalCycles)
+  totalLegsRegistered!: number
 
   @prop({ type: () => [FundMember], default: [] })
-  members!: FundMember[] // Danh sách người chơi tham gia dây hụi này
+  members!: FundMember[]
 
   @prop({ default: true })
-  status!: boolean // còn hoạt động hay không
+  status!: boolean
 
   @prop({ required: true })
   startDate!: Date
